@@ -1,0 +1,745 @@
+---
+title: "What Predicts Brownlow Votes?"
+description: "A deep dive into brownlow medal voting, using a statistical model to train and predict results, as well as a monte carlo simulation."
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article:
+    css: styles.css
+    includes:
+      in_header: favicon.html
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+
+library(tidyverse)
+library(reactable)
+library(plotly)
+
+source("R/00_config.R")
+source("R/01_fetch_data.R")
+source("R/02_clean.R")
+source("R/03_features.R")
+source("R/04_model.R")
+
+display_season <- max(counted_seasons)
+```
+
+```{r demo-notice, results = "asis"}
+if (isTRUE(DEMO_MODE)) {
+  cat(
+    "> **Note:** this page is currently rendering on synthetic demo data. ",
+    "Set `DEMO_MODE <- FALSE` in `R/00_config.R` once ready, then re-render.\n"
+  )
+}
+```
+
+This project has two main functions that we'll be looking into.
+
+Firstly, **what can a statistical model learn about Brownlow voting, and how accurately can it predict real results?**
+
+Secondly, **what do the Brownlow medal results look like when those modeled probabilities are used to simulate thousands of possible counts?**
+
+The model is trained on `r length(counted_seasons)` completed seasons
+(`r paste(range(counted_seasons), collapse = "–")`), using basic statistics tracked by
+AFL Tables alongside coaches votes, SuperCoach and AFL Fantasy scores.
+
+Historical model accuracy is measured using **leave-one-season-out validation**:
+meaning each season is removed from the training data before predictions are made for that particular
+season.
+
+The Monte Carlo analysis is a seperate analysis. It takes the model's estimated player
+strengths and repeatedly simulates Brownlow votes to produce a distribution of
+possible outcomes for the completed `r simulation_season` season.
+
+---
+
+# Part 1 — The Brownlow vote model
+
+## What is the model trying to predict?
+
+Based on the statistics for every player in every game, the model estimates the probability of receiving:
+
+* 0 votes
+* 1 vote
+* 2 votes
+* 3 votes
+
+Those probabilities are combined into an **expected-vote score**:
+
+**p(1 vote) × 1 + p(2 votes) × 2 + p(3 votes) × 3**
+
+This score is useful for ranking players in each game, but it is not itself a literal Brownlow
+vote total. The actual Brownlow awards exactly 3, 2 and 1 votes per game, whereas
+the expected-vote score is a one-number statistical estimate.
+
+The model is then converted into 3–2–1
+predictions within each game. Those predictions are then compared with the votes
+that were actually awarded.
+
+---
+
+## How accurate is the model?
+
+### Predicted vs. actual — `r display_season`
+
+The model was trained **without seeing `r display_season`'s results**, meaning the 2026 season is considered **out-of-sample**. It was then
+used to make 3–2–1 vote predictions for every game in that season.
+
+The table below compares those **out-of-sample model votes** with the actual
+Brownlow votes.
+
+```{r accuracy-table}
+cv_predictions %>%
+  filter(held_out_season == display_season) %>%
+  group_by(player_id) %>%
+  summarise(
+    Player = first(player),
+    Team = first(team),
+    `Actual votes` = sum(votes, na.rm = TRUE),
+    `OOS model votes` = sum(
+      predicted_votes_oos,
+      na.rm = TRUE
+    ),
+    .groups = "drop"
+  ) %>%
+  select(-player_id) %>%
+  arrange(desc(`Actual votes`)) %>%
+  slice_head(n = 25) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+The model's predictions can also be viewed directly against the actual vote
+totals.
+
+```{r accuracy-scatter}
+season_data <- cv_predictions %>%
+  filter(held_out_season == display_season) %>%
+  group_by(player_id) %>%
+  summarise(
+    player = first(player),
+    actual_votes = sum(votes, na.rm = TRUE),
+    predicted_votes = sum(
+      predicted_votes_oos,
+      na.rm = TRUE
+    ),
+    .groups = "drop"
+  )
+
+plot_ly(
+  season_data,
+  x = ~actual_votes,
+  y = ~predicted_votes,
+  type = "scatter",
+  mode = "markers",
+  text = ~player,
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = paste(
+      display_season,
+      "— out-of-sample predicted vs. actual votes"
+    ),
+    xaxis = list(title = "Actual votes"),
+    yaxis = list(title = "OOS model votes")
+  )
+```
+
+
+```{r accuracy-summary, results = "asis"}
+season_cv <- cv_results %>%
+  filter(model == "xgboost")
+
+naive_cv <- cv_results %>%
+  filter(model == "naive_disposals")
+
+if (nrow(season_cv) > 0) {
+
+  model_top3 <- mean(
+    season_cv$top3_hit_rate,
+    na.rm = TRUE
+  )
+
+  model_exact <- mean(
+    season_cv$exact_order_rate,
+    na.rm = TRUE
+  )
+
+  naive_top3 <- mean(
+    naive_cv$top3_hit_rate,
+    na.rm = TRUE
+  )
+
+  glue::glue(
+    "Across the completed seasons tested, the model correctly identified ",
+    "at least one of the game's three vote-getters in ",
+    "**{scales::percent(model_top3, accuracy = 1)}** of player-games tested, ",
+    "compared with **{scales::percent(naive_top3, accuracy = 1)}** for who had the ",
+    "highest disposals alone. The model matched the exact 3–2–1 ordering in ",
+    "**{scales::percent(model_exact, accuracy = 1)}** of cases."
+  )
+}
+```
+
+These figures are **out-of-sample results**: the season being evaluated was not
+used to train the model that predicted it.
+
+---
+
+## Is the model well-calibrated?
+
+Accuracy and calibration measure different things.
+
+Accuracy asks whether the model correctly identifies who receives votes.
+Calibration asks whether the model's probabilities themselves are sensible.
+
+For example, if the model assigns a group of players a 70% probability of polling
+at least one vote, a well-calibrated model should see roughly 70% of those players
+actually poll a vote.
+
+```{r calibration-chart}
+plot_ly(
+  calibration_data,
+  x = ~mean_predicted_prob,
+  y = ~actual_poll_rate,
+  type = "scatter",
+  mode = "markers+lines",
+  name = "Model"
+) %>%
+  add_trace(
+    x = c(0, 1),
+    y = c(0, 1),
+    type = "scatter",
+    mode = "lines",
+    line = list(
+      dash = "dash",
+      color = "grey"
+    ),
+    name = "Perfect calibration"
+  ) %>%
+  layout(
+    title = "Predicted vs. actual poll rate",
+    xaxis = list(
+      title = "Model probability of polling"
+    ),
+    yaxis = list(
+      title = "Actual share who polled"
+    )
+  )
+```
+
+Points close to the dashed line indicate that the model's probabilities are
+reasonably aligned with what actually happens. Places where deviations occur indicate
+areas where the model is over or under-confident.
+
+---
+
+## What matters most for Brownlow votes?
+
+The model contains a broad set of player-game statistics rather than relying on
+one measure such as disposals.
+
+Feature importance shows which statistics contribute most to the model's predictions.
+
+```{r importance-plot, fig.height = 5}
+if (
+  is.data.frame(shap_summary) &&
+  "mean_value" %in% names(shap_summary)
+) {
+
+  SHAPforxgboost::shap.plot.summary(shap_summary)
+
+} else if (is.data.frame(shap_summary)) {
+
+  top_importance <- shap_summary %>%
+    arrange(desc(Gain)) %>%
+    slice_head(n = 12)
+
+  plot_ly(
+    top_importance,
+    x = ~reorder(Feature, Gain),
+    y = ~Gain,
+    type = "bar"
+  ) %>%
+    layout(
+      title = "Feature importance",
+      xaxis = list(title = ""),
+      yaxis = list(title = "Importance")
+    )
+}
+```
+
+```{r importance-takeaway, results = "asis"}
+top_features <- if (
+  is.data.frame(shap_summary) &&
+  "mean_value" %in% names(shap_summary)
+) {
+
+  shap_summary %>%
+    group_by(variable) %>%
+    summarise(
+      importance = mean(abs(value)),
+      .groups = "drop"
+    ) %>%
+    arrange(desc(importance)) %>%
+    slice_head(n = 5) %>%
+    pull(variable)
+
+} else if (is.data.frame(shap_summary)) {
+
+  shap_summary %>%
+    arrange(desc(Gain)) %>%
+    slice_head(n = 5) %>%
+    pull(Feature)
+
+} else {
+
+  character(0)
+}
+
+if (length(top_features) > 0) {
+  glue::glue(
+    "The five strongest predictors in the model are: ",
+    "**{paste(top_features, collapse = ', ')}**."
+  )
+}
+```
+
+Feature importance describes what the model uses to make its predictions.
+
+---
+
+## Biggest misses
+
+Some individual games were predicted particularly well, while others produced
+large differences between the model's prediction and the actual
+Brownlow result.
+
+### Exact out-of-sample matches
+
+These are examples where the model's predicted vote count was significantly off the
+actual number of votes awarded.
+
+
+### Biggest misses
+
+```{r biggest-surprises}
+biggest_surprises %>%
+  transmute(
+    Season = season,
+    Round = round,
+    Team = team,
+    Player = player,
+    Disposals = disposals,
+    `Actual votes` = votes,
+    `OOS model votes` = predicted_votes
+  ) %>%
+  slice_head(n = 20) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+---
+
+## Has the relationship between statistics and votes changed?
+
+The relationship between individual statistics and Brownlow votes can change from
+season to season.
+
+The chart below shows the Spearman correlation between each statistic and votes
+over time.
+
+```{r votes-over-time}
+plot_ly(
+  votes_over_time,
+  x = ~season,
+  y = ~correlation,
+  color = ~stat,
+  type = "scatter",
+  mode = "lines+markers"
+) %>%
+  layout(
+    title = "Correlation with votes by season",
+    xaxis = list(title = ""),
+    yaxis = list(title = "Spearman correlation")
+  )
+```
+
+Correlation is descriptive rather than causal: a strong relationship between a
+statistic and Brownlow votes does not establish that the statistic itself causes
+the voting outcome. As we can see there is some fluctuation between statistics, but not a significant amount.
+
+---
+
+## Who was statistically over- or under-rewarded? — `r display_season`
+
+The vote-equity measure compares the model's full-data expected-vote score with
+the actual vote total.
+
+A positive vote equity index means the player's statistical profile received fewer actual
+votes than the model's expected-vote score would suggest. A negative value means
+the player received more actual votes than the model expected.
+
+### Under-rewarded players
+
+Players with the largest positive vote-equity values received fewer actual
+votes than their statistical profile would suggest.
+
+```{r vote-equity-under-rewarded}
+vote_equity_counted %>%
+  filter(season == display_season) %>%
+  mutate(
+    vote_equity_index = predicted_votes - actual_votes
+  ) %>%
+  arrange(desc(vote_equity_index)) %>%
+  transmute(
+    Player = player,
+    Team = team,
+    `Actual votes` = actual_votes,
+    `Model expected votes` = round(predicted_votes, 1),
+    `Vote Equity Index` = round(vote_equity_index, 1)
+  ) %>%
+  slice_head(n = 15) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+### Over-rewarded players
+
+Players with the largest negative vote-equity values received more actual votes
+than their statistical profile would suggest.
+
+```{r vote-equity-over-rewarded}
+vote_equity_counted %>%
+  filter(season == display_season) %>%
+  mutate(
+    vote_equity_index = predicted_votes - actual_votes
+  ) %>%
+  arrange(vote_equity_index) %>%
+  transmute(
+    Player = player,
+    Team = team,
+    `Actual votes` = actual_votes,
+    `Model expected votes` = round(predicted_votes, 1),
+    `Vote Equity Index` = round(vote_equity_index, 1)
+  ) %>%
+  slice_head(n = 15) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+Because these analyses use the full-data model rather than held-out predictions,
+they should not be interpreted as measures of out-of-sample model accuracy.
+
+
+---
+
+# Part 2 — Monte Carlo Brownlow simulation
+
+## What happens when the model is used to simulate the count?
+
+The model and the simulation serve different purposes.
+
+The **model** estimates how likely each player is to receive 0, 1, 2 or 3 votes
+in each game.
+
+The **Monte Carlo simulation** takes those modelled player strengths and generates
+many possible Brownlow counts. In each simulated count, every game still awards
+exactly 3, 2 and 1 votes.
+
+This means the simulation produces a **distribution of possible Brownlow
+outcomes**, rather than a single deterministic vote prediction.
+
+For the `r simulation_season` season, the results below are based on
+`r format(N_SIMULATIONS, big.mark = ",")` simulated counts.
+
+> **Important:** Since the `r simulation_season` season has completed, This simulation is
+> therefore a retrospective application of the model to that season, not a
+> prospective forecast of an unknown Brownlow count.
+
+---
+
+## Who has the highest simulated probability of winning?
+
+The win probability is the percentage of simulated Brownlow counts won by each
+player.
+
+```{r win-probability}
+win_probabilities %>%
+  slice_head(n = 15) %>%
+  transmute(
+    Player = player,
+    Team = team,
+    `Win probability` = scales::percent(
+      win_probability,
+      accuracy = 0.1
+    )
+  ) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+```{r win-probability-chart}
+plot_ly(
+  win_probabilities %>% slice_head(n = 10),
+  x = ~reorder(player, win_probability),
+  y = ~win_probability,
+  type = "bar"
+) %>%
+  layout(
+    title = paste(
+      simulation_season,
+      "simulated Brownlow win probability"
+    ),
+    xaxis = list(title = ""),
+    yaxis = list(
+      title = "Win probability",
+      tickformat = ".0%"
+    )
+  )
+```
+
+This is a simulation result, not a statement about the model's historical
+accuracy.
+
+---
+
+## What vote totals does the simulation produce?
+
+The simulation gives each player a distribution of possible Brownlow totals.
+
+* **Simulated mean** = average vote total across all simulations.
+* **Median** = the middle number of votes received in the simulated outcome.
+* **P10** = a 10% chance the result is lower.
+* **P90** = a 90% chance the result is lower.
+
+```{r vote-distributions}
+vote_distributions %>%
+  transmute(
+    Player = player,
+    Team = team,
+    `Simulated mean` = round(mean_votes, 1),
+    `Median` = median_votes,
+    `P10` = round(p10, 1),
+    `P90` = round(p90, 1),
+    `Win probability` = scales::percent(
+      win_probability,
+      accuracy = 0.1
+    )
+  ) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+The **simulated mean should not be expected to equal the model's raw
+expected-vote score** or the deterministic 3–2–1 model prediction, as those are different calculations.
+
+---
+
+## How does the simulated race develop round by round?
+
+This chart shows the cumulative predicted votes for the leading contenders.
+
+It is included as a way of visualising the modelled race, while the table above
+shows the probabilistic Monte Carlo distribution.
+
+```{r round-by-round-chart, fig.height = 6}
+top_contenders <- win_probabilities %>%
+  slice_head(n = 10) %>%
+  pull(player)
+
+round_by_round_leaderboard %>%
+  filter(player %in% top_contenders) %>%
+  plot_ly(
+    x = ~round,
+    y = ~cumulative_predicted_votes,
+    color = ~player,
+    type = "scatter",
+    mode = "lines+markers"
+  ) %>%
+  layout(
+    title = "Cumulative model-predicted votes by round",
+    xaxis = list(title = "Round"),
+    yaxis = list(title = "Cumulative predicted votes")
+  )
+```
+
+These are deterministic model predictions, so they will not necessarily equal a
+player's simulated mean. The simulation introduces randomness and therefore
+produces a large range of possible outcomes.
+
+---
+
+## Which games are most likely to produce 3 votes?
+
+The simulation can also show which individual games should most
+frequently result in the maximum three votes.
+
+```{r three-vote-games}
+three_vote_games %>%
+  slice_head(n = 20) %>%
+  transmute(
+    Round = round,
+    Player = player,
+    Team = team,
+    `Probability of 3 votes` = scales::percent(
+      prob_3votes,
+      accuracy = 0.1
+    )
+  ) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+---
+
+## Can the simulation correctly predict past Brownlow winners?
+
+The simulation can also be backtested historically.
+
+For each completed season, the model is kept out of that season's training data.
+The resulting out-of-sample player strengths are then passed into the Monte Carlo
+simulation.
+
+The test asks whether the player with the highest simulated win probability
+matches the player who actually won the Brownlow medal that season.
+
+```{r backtest-summary, results = "asis"}
+if (nrow(simulation_backtest) > 0) {
+
+  accuracy_rate <- mean(
+    simulation_backtest$correct,
+    na.rm = TRUE
+  )
+
+  glue::glue(
+    "Across {nrow(simulation_backtest)} completed seasons tested, ",
+    "the simulation's highest-probability winner matched the actual Brownlow ",
+    "winner in {sum(simulation_backtest$correct, na.rm = TRUE)} seasons ",
+    "({scales::percent(accuracy_rate, accuracy = 1)})."
+  )
+}
+```
+
+```{r backtest-table}
+simulation_backtest %>%
+  transmute(
+    Season = season,
+    `Simulation's highest-probability player` = predicted_winner,
+    `Predicted winner probability` = scales::percent(
+      predicted_win_prob,
+      accuracy = 0.1
+    ),
+    `Actual winner` = real_winner,
+    `Actual winner probability` = scales::percent(
+      actual_winner_win_prob,
+      accuracy = 0.1
+    ),
+    `Actual votes` = real_winner_total_votes,
+    Correct = ifelse(
+      correct,
+      "✓",
+      "✗"
+    )
+  ) %>%
+  reactable(
+  striped = TRUE,
+  highlight = TRUE,
+  filterable = TRUE,
+  wrap = FALSE,
+  fullWidth = TRUE,
+  width = "100%",
+  defaultColDef = colDef(minWidth = 200)
+)
+```
+
+This test is deliberately different from the per-game accuracy analysis above.
+The model section asks **how accurately individual game votes can be predicted**, and
+the simulation backtest asks **whether those modeled strengths produce the
+correct overall Brownlow winner when converted into simulated counts**.
+
+---
+
+# Conclusion
+
+As you can see in the provided tables and analysis, the model and simulation results are not always going to be 100% correct, but with the Brownlow medal being a largely subjective award that was always bound to be the case.
+
+I still think the model and simulations performed quite well all things considered. If you look at the predicted vs actual votes for season 2026 as well as the vote equity index, most of the top vote-getters were within 1-2 votes, with some exceptions such as M.Gawn, I.Rankine and C.Oliver (who all polled higher than consensus).
+
+We were able to conclude that coaches votes are the single best predictor for brownlow votes, with disposals and goals following in 2nd & 3rd. This should come as no surprise, as many of the top vote-getters for the AFLCA Player of the year are usually some of the highest Brownlow vote-getters. Adding to this, goal-kicking midfielders are widely-seen as the most dynamic/important players in the game, so it's no surprise to see disposals and goals as strong indicators.
+
+Whilst the model was only able to predict 5 of the last 10 Brownlow winners, it had a 100% success rate when the predicted winner had more than 40% probability to win the award. Some of the past winners such as 2025 Rowell, 2023 Neale and 2019 Fyfe are widely-viewed as unexpected winners, and the simulations reflected that with each of them having less than 7% probability to win the award.
+
+Thank you for reading this analysis, I hope you found it insightful!
+
+---
+
+# Limitations
+
+Brownlow votes are a small-sample and are a largely subjective outcome. This analysis
+shows statistical relationships and predictive performance. it does not establish
+why umpires award votes.
+
+The Monte Carlo simulation treats games as independent and keeps each player's
+modeled strength fixed across the season. It therefore does not explicitly model
+injuries, suspensions, changing roles or changes in form after the data
+was collected.
+
+The simulation is also not a replacement for the model's historical accuracy
+testing. Its outputs are distributions generated from the model's estimated
+strengths, whereas the out-of-sample accuracy section evaluates predictions
+against actual Brownlow votes.

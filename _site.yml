@@ -1,0 +1,26 @@
+name: "Core Sports Data"
+title: "Core Sports Data"
+output_dir: "docs"
+navbar:
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "AFL"
+      menu:
+        - text: "How to win games: A basic analysis (2025)"
+          href: AFL.html
+        - text: "What Predicts Brownlow Votes? (2026)"
+          href: brownlow_analysis.html
+        - text: "Coming soon!"
+          href: afl_player_analysis.html
+        - text: "Coming soon!"
+          href: afl_predictions.html
+        - text: "Coming soon!"
+          href: afl_historical.html
+    - text: "About"
+      href: about.html
+output: 
+  distill::distill_article:
+    css: styles.css
+    includes:
+      in_header: favicon.html

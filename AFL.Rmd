@@ -1,0 +1,287 @@
+---
+title: "How to win games: A basic analysis (2025)"
+date: "2026-01-21"
+output: 
+  distill::distill_article:
+    css: styles.css
+    includes:
+      in_header: favicon.html
+---
+```{r afl-setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+# 1. Load Libraries
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(xaringanExtra)
+library(htmltools)
+library(reactable)
+library(purrr)
+
+# 2. Activate the Tabs (Panelset)
+xaringanExtra::use_panelset()
+
+# 3. Load Data
+afl_data <- read_excel("afl_team_stats_analysis.xlsx")
+
+# 4. Data Cleaning (Ensure numbers are numeric)
+stats_list <- c("Disposal_Diff", "I50_Diff", "Clearance_Diff", "Tackle_Diff", "Metres_Diff")
+afl_data <- afl_data %>%
+  mutate(across(all_of(c(stats_list, "Margin")), ~as.numeric(as.character(.))))
+```
+
+## Introduction
+
+Welcome to my first analysis on the site! This is simply a basic review of season 2025 and the relationship between various basic stats and winning games of footy, utilising individual team differentials in each stat. 
+
+**What do I mean by differentials?** In this case, A differential is simply the difference between a team's statistic and their opponent's statistic in the same match. For example, if Team A had 350 disposals and Team B had 300, Team A's Disposal Differential would be +50.
+
+I have focused on 5 different basic metrics:
+
+- **Disposals:** Passing the ball by either kick or handball
+
+- **Inside 50s:** Running or passing the ball inside your attacking 50 metre arc
+
+- **Clearances:** The clearing of the ball out of a stoppage situation
+
+- **Tackles:** Grabbing an opposition player who is in possession of the ball
+
+- **Metres Gained:** Number of metres a player moves the ball forward in a game
+
+*Below is all of the data collected from season 2025 for this analysis, using the FitzRoy R package.*
+
+## Data Overview
+```{r afl-data-table}
+reactable(
+  afl_data,
+  filterable = TRUE,
+  searchable = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  defaultPageSize = 10,
+  bordered = TRUE,
+  theme = reactableTheme(
+    borderColor = "#dfe2e5",
+    stripedColor = "#f6f8fa",
+    highlightColor = "#f0f5ff",
+    cellPadding = "8px 12px"
+  )
+)
+```
+
+## Statistical Analysis
+
+::::: {.panelset}
+
+::: {.panel}
+### Correlation Summary {.panel-name}
+```{r afl-correlation-summary}
+# Calculate correlations for all stats
+correlation_summary <- tibble(
+  Statistic = stats_list
+) %>%
+  rowwise() %>%
+  mutate(
+    Correlation = cor(afl_data[[Statistic]], afl_data$Margin, use = "complete.obs"),
+    `R-Squared` = round(Correlation^2, 3),
+    Correlation = round(Correlation, 3)
+  ) %>%
+  arrange(desc(`R-Squared`))
+
+reactable(
+  correlation_summary,
+  columns = list(
+    Statistic = colDef(
+      name = "Statistical Metric",
+      minWidth = 150,
+      cell = function(value) {
+        gsub("_", " ", value)
+      }
+    ),
+    Correlation = colDef(
+      name = "Correlation (r)",
+      minWidth = 120,
+      format = colFormat(digits = 3)
+    ),
+    `R-Squared` = colDef(
+      name = "R² Value",
+      minWidth = 100,
+      format = colFormat(digits = 3),
+      style = function(value) {
+        normalized <- (value - min(correlation_summary$`R-Squared`)) / 
+                      (max(correlation_summary$`R-Squared`) - min(correlation_summary$`R-Squared`))
+        color <- rgb(colorRamp(c("#ffffff", "#0055aa"))(normalized) / 255)
+        list(background = color)
+      }
+    )
+  ),
+  defaultSorted = "R-Squared",
+  defaultSortOrder = "desc",
+  bordered = TRUE,
+  highlight = TRUE,
+  theme = reactableTheme(
+    borderColor = "#dfe2e5",
+    highlightColor = "#f0f5ff"
+  )
+)
+```
+
+:::
+
+::: {.panel}
+### Scatter Plots {.panel-name}
+
+#### Disposal Differential
+```{r disposal-chart}
+plot_data <- afl_data %>% filter(!is.na(Disposal_Diff), !is.na(Margin))
+r_sq <- round(cor(plot_data$Disposal_Diff, plot_data$Margin)^2, 3)
+
+p <- ggplot(plot_data, aes(x = Disposal_Diff, y = Margin)) +
+  geom_point(aes(text = paste("Team:", Team,
+                              "<br>Opponent:", Opponent,
+                              "<br>Round:", Round,
+                              "<br>Disposal Diff:", Disposal_Diff,
+                              "<br>Margin:", Margin)),
+             alpha = 0.6, color = "#0055aa", size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  labs(title = "Disposal Differential vs Winning Margin",
+       subtitle = paste("R² =", r_sq),
+       x = "Disposal Differential",
+       y = "Margin (Points)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "grey40", size = 11)
+  )
+
+ggplotly(p, tooltip = "text")
+```
+
+#### Inside 50 Differential
+```{r i50-chart}
+plot_data <- afl_data %>% filter(!is.na(I50_Diff), !is.na(Margin))
+r_sq <- round(cor(plot_data$I50_Diff, plot_data$Margin)^2, 3)
+
+p <- ggplot(plot_data, aes(x = I50_Diff, y = Margin)) +
+  geom_point(aes(text = paste("Team:", Team,
+                              "<br>Opponent:", Opponent,
+                              "<br>Round:", Round,
+                              "<br>Inside 50 Diff:", I50_Diff,
+                              "<br>Margin:", Margin)),
+             alpha = 0.6, color = "#0055aa", size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  labs(title = "Inside 50 Differential vs Winning Margin",
+       subtitle = paste("R² =", r_sq),
+       x = "Inside 50 Differential",
+       y = "Margin (Points)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "grey40", size = 11)
+  )
+
+ggplotly(p, tooltip = "text")
+```
+
+#### Clearance Differential
+```{r clearance-chart}
+plot_data <- afl_data %>% filter(!is.na(Clearance_Diff), !is.na(Margin))
+r_sq <- round(cor(plot_data$Clearance_Diff, plot_data$Margin)^2, 3)
+
+p <- ggplot(plot_data, aes(x = Clearance_Diff, y = Margin)) +
+  geom_point(aes(text = paste("Team:", Team,
+                              "<br>Opponent:", Opponent,
+                              "<br>Round:", Round,
+                              "<br>Clearance Diff:", Clearance_Diff,
+                              "<br>Margin:", Margin)),
+             alpha = 0.6, color = "#0055aa", size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  labs(title = "Clearance Differential vs Winning Margin",
+       subtitle = paste("R² =", r_sq),
+       x = "Clearance Differential",
+       y = "Margin (Points)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "grey40", size = 11)
+  )
+
+ggplotly(p, tooltip = "text")
+```
+
+#### Tackle Differential
+```{r tackle-chart}
+plot_data <- afl_data %>% filter(!is.na(Tackle_Diff), !is.na(Margin))
+r_sq <- round(cor(plot_data$Tackle_Diff, plot_data$Margin)^2, 3)
+
+p <- ggplot(plot_data, aes(x = Tackle_Diff, y = Margin)) +
+  geom_point(aes(text = paste("Team:", Team,
+                              "<br>Opponent:", Opponent,
+                              "<br>Round:", Round,
+                              "<br>Tackle Diff:", Tackle_Diff,
+                              "<br>Margin:", Margin)),
+             alpha = 0.6, color = "#0055aa", size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  labs(title = "Tackle Differential vs Winning Margin",
+       subtitle = paste("R² =", r_sq),
+       x = "Tackle Differential",
+       y = "Margin (Points)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "grey40", size = 11)
+  )
+
+ggplotly(p, tooltip = "text")
+```
+
+#### Metres Gained Differential
+```{r metres-chart}
+plot_data <- afl_data %>% filter(!is.na(Metres_Diff), !is.na(Margin))
+r_sq <- round(cor(plot_data$Metres_Diff, plot_data$Margin)^2, 3)
+
+p <- ggplot(plot_data, aes(x = Metres_Diff, y = Margin)) +
+  geom_point(aes(text = paste("Team:", Team,
+                              "<br>Opponent:", Opponent,
+                              "<br>Round:", Round,
+                              "<br>Metres Diff:", Metres_Diff,
+                              "<br>Margin:", Margin)),
+             alpha = 0.6, color = "#0055aa", size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  labs(title = "Metres Gained Differential vs Winning Margin",
+       subtitle = paste("R² =", r_sq),
+       x = "Metres Gained Differential",
+       y = "Margin (Points)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "grey40", size = 11)
+  )
+
+ggplotly(p, tooltip = "text")
+```
+
+:::
+
+:::::
+
+*The correlation (r) value simply measures the strength of the relationship (In this case, each stat and winning games). -1 indicates a perfect negative correlation, and +1 indicates a perfect positive correlation, with 0 meaning no correlation. R² is a value between 0 and 1, and indicates how well our simple model predicts the final outcome. for example if you have an r² value of 0.5, it means 50% of the variability in the outcome can be explained by our model, with a higher r² indicating a better fit*
+
+## Which stat is the best indicator to seperate wins and losses?
+
+Metres gained by a large margin. The R² value between metres gained and winning margin is 0.9002, which shows a strong positive relationship between metres gained and margin of victory. This is by far the highest R² between all stats measured. The average metres gained for winning teams is around 900 more metres gained compared to the losing team. This indicates to us that having territory over your opponenent is key for winning games.
+
+## Which stats may be slightly overrated?
+
+Both clearance and tackle differential showed weak correlations to margin of victory. Tackles showed an R² value of 0.0523 showing next to no correlation between tackles and winning. This is most likely due to losing teams having on average 45 less disposals compared to that of winning teams, meaning there is more opportunity for losing teams to complete tackles due to having less of the ball. Clearances was the biggest shock for me, with an R² value of just 0.1498 which indicates a weak correlation to winning, and winning teams only having around 6 more clearances per game compared to that of losing teams. This came as the biggest shock to me as winning the clearance battle *should* mean you have more of the ball, as well as more metres gained than your opponent, which both correlate strongly towards winning. The reason the correlation between clearances and winning margin may be so low is because it is an extremely isolated stat and does not take into account whether a clearance is effective or not. This leads me to believe that whilst the total number of clearances a team gets within a game may not be the strongest indicator for winning, deeper analysis into clearance work may show that things such as effective clearances and clearances that result in an inside 50 would show a stronger correlation to winning and final margin.
+
+## Which finding surprised me most?
+
+Inside 50s only have an R² value of 0.465 was the most surprising find in my opinion.  All though this does indicate a slightly positive relationship, I was expecting a much higher correlation between the two, as most scoring opportunities come as a result from getting inside 50s. The fact that winning teams only averaged 12 more inside 50s per game compared to losing teams was a shock to me as i expected this number to be at least 15-20. This may indicate that whilst the volume of inside 50s is still an important stat and can correlate to winning games, the efficiency of inside 50s your team gathers should have a much stronger correlation to winning games and final margin. This indicates that whilst dump and chaos kicks inside 50 can still lead to scoring opportunities and more applied pressure to opposition defences, lowering the eyes and waiting for the best opportunity to find a teammate inside 50 may give teams an improved chance of winning as opposed to simply kick and hope inside 50s.
+
+
+## Conclusion
+
+The data gives us a basic insight into what did and did not lead to teams winning games in 2025. Metres gained having the highest correlation score should be no shock as this simply means the ball is in your forward territory more often, whereas total disposal and clearance counts showed a surprising lack of correlation to winning games. Thank you for reading my first analysis, stay tuned for more in future and feel free to give any [feedback](https://x.com/CoreSportsData)!

@@ -1,0 +1,62 @@
+---
+title: "Core Sports Data"
+description: |
+  Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL.
+output: 
+  distill::distill_article:
+    css: styles.css
+    includes:
+      in_header: favicon.html
+---
+```{r index-setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+**Feel free to dive into any of the projects below!**
+
+[Which stats contribute heaviest to winning?](AFL.html)
+
+[What predicts brownlow votes?](brownlow_analysis.html)
+
+------------------------------------------------------------------------
+
+## What will you find here? (+Future plans!)
+
+### [AFL Analysis](AFL.html)
+
+statistical AFL analysis featuring:
+
+-   **Interactive visuals** where you can find historical statistic data
+-   **Correlation analysis** finding which statistics directly correlate to being successful
+-   **Data tables** with statistics provided for free use
+-   **Final thoughts and insights** where we take the numbers and break them down in an easy to understand way
+
+### [About the Data & Myself](about.html)
+
+Understanding the methodology and inspirations behind this page:
+
+-   Data sources
+-   Statistics glossary
+-   Limitations and context behind the data
+-   Inspirations and background
+
+### Future plans!
+
+-   Further statistical analysis on AFL
+-   AFL prediction models (match + brownlow) 
+-   Expanding to other sports i'm passionate about (Soccer, NBA, NFL etc.)
+
+------------------------------------------------------------------------
+
+## Why is Data analysis important in sport?
+
+Within a sporting context, data-driven analysis is crucial when trying to broaden your knowledge of the game.
+
+-   **Coaches** being able to identify which areas their team succeed at and what their opponents potential weaknesses are can give them a huge advantage when creating a game plan
+-   **Analysts** can find relationships between stats and outcomes and provide an easier understanding as to why **point A** is a big reason for **point B** happening\
+-   **Fans** can gain a greater understanding of why the team they support plays a certain way, or why **Player A** has certain strengths over **Player B**
+-   **Media** can provide evidence-based commentary on team and player performance
+
+------------------------------------------------------------------------
+
+*DISCLAIMER: This is a passion project. The page will be updated during my free time, and I appreciate all of the support for the page.*

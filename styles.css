@@ -1,0 +1,638 @@
+/* Ultra-Modern, Premium Design - Sleek & Classy */
+
+/* Import Google Fonts for Premium Typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* CSS Variables for Consistent Theming */
+:root {
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #34d399;
+  --color-background: #0a0a0a;
+  --color-surface: #151515;
+  --color-surface-elevated: #1e1e1e;
+  --color-border: #2a2a2a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1a1;
+  --color-accent: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Body and Base Styling */
+body {
+  background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+  color: var(--color-text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.65;
+  font-size: 16px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Animated Background Gradient */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+  animation: rotate 30s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Full Width Container - Balanced Layout */
+.container-fluid,
+.distill-site-header,
+d-article,
+.container,
+.d-contents,
+.d-article,
+body > div,
+#main,
+.main-content {
+  max-width: 1600px !important;
+  width: 100% !important;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box;
+}
+
+/* Article Content */
+d-article .article-content,
+.article-content,
+d-title,
+d-byline,
+d-article > *,
+.l-body,
+.l-page,
+.l-gutter,
+.l-text,
+.l-middle,
+.l-screen,
+.l-screen-inset,
+.l-body-outset {
+  max-width: 100% !important;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+  grid-column: 1 / -1 !important;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Premium Card-like Content Sections */
+d-article {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 3rem;
+  margin: 2rem auto;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle gradient overlay on articles */
+d-article::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  opacity: 0.5;
+}
+
+/* Headings - Ultra-Modern Typography */
+h1 {
+  color: var(--color-text-primary);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  line-height: 1.1;
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  border-radius: 2px;
+}
+
+h2 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  margin-top: 4rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+  position: relative;
+  padding-left: 1.5rem;
+  line-height: 1.2;
+}
+
+h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: 2px;
+}
+
+h3 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Links - Premium Interaction */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  position: relative;
+  transition: color var(--transition-base);
+  font-weight: 500;
+}
+
+a::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-primary-light);
+}
+
+a:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Horizontal Rules - Elegant Divider */
+hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+  margin: 4rem 0;
+  position: relative;
+}
+
+hr::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+/* Lists - Clean & Spacious */
+ul, ol {
+  line-height: 1.8;
+  color: var(--color-text-primary);
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+li {
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+  position: relative;
+}
+
+ul li::marker {
+  color: var(--color-primary);
+}
+
+/* Strong/Bold - Accent with Gradient */
+strong {
+  color: var(--color-primary-light);
+  font-weight: 600;
+}
+
+/* Code Blocks - Developer-Grade Styling */
+code {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-primary-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.9em;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  font-weight: 500;
+}
+
+pre {
+  background: #000000;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  padding: 1.5rem;
+  overflow-x: auto;
+  color: var(--color-text-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  margin: 2rem 0;
+}
+
+pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--color-text-primary);
+}
+
+/* Blockquotes - Elegant & Impactful */
+blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding: 1.5rem 2rem;
+  margin: 2.5rem 0;
+  color: var(--color-text-primary);
+  font-style: italic;
+  font-size: 1.1rem;
+  background: var(--color-surface-elevated);
+  border-radius: 0 12px 12px 0;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+blockquote::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: 4rem;
+  color: var(--color-primary);
+  opacity: 0.2;
+  font-family: Georgia, serif;
+}
+
+/* Tables - Data Visualization Excellence */
+table {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  margin: 2.5rem 0;
+  border: 1px solid var(--color-border);
+}
+
+th {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  color: var(--color-text-primary);
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+}
+
+td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: var(--color-surface-elevated);
+}
+
+tbody tr {
+  transition: all var(--transition-fast);
+}
+
+/* Emphasis - Subtle Highlight */
+em {
+  color: var(--color-primary-light);
+  font-style: italic;
+}
+
+/* Navigation - Premium Header */
+.distill-site-header {
+  background: rgba(10, 10, 10, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all var(--transition-base);
+}
+
+.distill-site-nav {
+  font-weight: 500;
+}
+
+.distill-site-nav a {
+  color: var(--color-text-secondary) !important;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  transition: all var(--transition-base);
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.distill-site-nav a:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-primary-light) !important;
+  transform: translateY(-1px);
+}
+
+/* Dropdown Menu - Glass Morphism */
+.distill-site-nav .dropdown-menu {
+  background: rgba(21, 21, 21, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-xl);
+  border-radius: 12px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.distill-site-nav .dropdown-menu a,
+.distill-site-nav .dropdown-item {
+  color: var(--color-text-secondary) !important;
+  background-color: transparent !important;
+  padding: 0.75rem 1.25rem !important;
+  display: block;
+  transition: all var(--transition-base);
+  border-radius: 8px;
+  margin: 0.25rem 0;
+}
+
+.distill-site-nav .dropdown-menu a:hover,
+.distill-site-nav .dropdown-item:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary)) !important;
+  color: var(--color-text-primary) !important;
+  transform: translateX(4px);
+}
+
+/* Paragraphs - Optimal Readability */
+p {
+  color: var(--color-text-primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  max-width: 100%;
+}
+
+/* Buttons - Premium Interactive Elements */
+button, .btn {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-text-primary);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before, .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left var(--transition-slow);
+}
+
+button:hover::before, .btn:hover::before {
+  left: 100%;
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+button:active, .btn:active {
+  transform: translateY(0);
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+  border: 3px solid var(--color-background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Selection Highlight */
+::selection {
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+}
+
+::-moz-selection {
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+}
+
+/* Focus Styles - Accessibility */
+*:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Logo Size - More Specific Selectors */
+.distill-site-header .navbar-brand img,
+.distill-site-header img,
+.navbar-brand img,
+.distill-site-nav .navbar-brand img,
+nav img,
+.distill-site-header .logo img {
+  height: 66px !important;
+  width: auto !important;
+  max-height: 66px !important;
+  margin-right: 10px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+}
+
+/* Hide title text, show only logo */
+.distill-site-header .title,
+.navbar-header .navbar-brand-text,
+.distill-site-nav .title,
+.distill-site-header a.title,
+.navbar .title {
+  display: none !important;
+  visibility: hidden !important;
+  font-size: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+}
+
+/* Premium Panels */
+.panel, .card {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.panel:hover, .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary);
+}
+
+/* Loading Animation for Interactive Elements */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  d-article {
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .container-fluid,
+  .distill-site-header,
+  d-article,
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .distill-site-header,
+  button,
+  .btn {
+    display: none;
+  }
+}
