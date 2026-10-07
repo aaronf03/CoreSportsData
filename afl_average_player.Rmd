@@ -26,7 +26,7 @@ Everyone knows about the stars of the competition, But who is the **most average
 
 To answer that, I gave every player a **z-score for each stat over their entire career**. A z-score of **0 means exactly the average player**, +1 means one standard deviation above, and -1 means one below. Every stat measured is weighted equally.
 
-**The answer: `r top$player`**, who played `r top$games` games (`r top$first_season`–`r top$last_season`) and whose career sits an average of just **`r round(top$avg_score, 2)` standard deviations** from average across the `r avg_meta$n_components` statistics being used.
+**The answer: `r top$player`**, who's played `r top$games` games (`r top$first_season`–`r top$last_season`) and whose career sits an average of just **`r round(top$avg_score, 2)` standard deviations** from average across the `r avg_meta$n_components` statistics being used.
 
 ---
 
