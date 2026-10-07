@@ -18,6 +18,8 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 [What predicts brownlow votes?](brownlow_analysis.html)
 
+[Who has the most average AFL career?](afl_average_player.html)
+
 ------------------------------------------------------------------------
 
 ## What will you find here? (+Future plans!)

@@ -89,29 +89,32 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>Core Sports Data</title>
+  <title>Core Sports Data: Who has the most average AFL career?</title>
 
-  <meta property="description" itemprop="description" content="Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL."/>
+  <meta property="description" itemprop="description" content="I built a z-score model to find the AFL player whose whole career sits closest to the average."/>
 
 
+  <!--  https://schema.org/Article -->
+  <meta property="article:published" itemprop="datePublished" content="2026-10-07"/>
+  <meta property="article:created" itemprop="dateCreated" content="2026-10-07"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Core Sports Data"/>
+  <meta property="og:title" content="Core Sports Data: Who has the most average AFL career?"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL."/>
+  <meta property="og:description" content="I built a z-score model to find the AFL player whose whole career sits closest to the average."/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Core Sports Data"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Core Sports Data"/>
-  <meta property="twitter:description" content="Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL."/>
+  <meta property="twitter:title" content="Core Sports Data: Who has the most average AFL career?"/>
+  <meta property="twitter:description" content="I built a z-score model to find the AFL player whose whole career sits closest to the average."/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","output"]}},"value":[{"type":"character","attributes":{},"value":["Core Sports Data"]},{"type":"character","attributes":{},"value":["Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL.\n"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["css","includes"]}},"value":[{"type":"character","attributes":{},"value":["styles.css"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["in_header"]}},"value":[{"type":"character","attributes":{},"value":["favicon.html"]}]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Who has the most average AFL career?"]},{"type":"character","attributes":{},"value":["I built a z-score model to find the AFL player whose whole career sits closest to the average."]},{"type":"character","attributes":{},"value":["2026-10-07"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["css","includes"]}},"value":[{"type":"character","attributes":{},"value":["styles.css"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["in_header"]}},"value":[{"type":"character","attributes":{},"value":["favicon.html"]}]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2101,6 +2104,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   <!--/radix_placeholder_distill-->
   <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+  <script src="site_libs/core-js-2.5.3/shim.min.js"></script>
+  <script src="site_libs/react-18.2.0/react.min.js"></script>
+  <script src="site_libs/react-18.2.0/react-dom.min.js"></script>
+  <script src="site_libs/reactwidget-2.0.0/react-tools.js"></script>
+  <link href="site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet" />
+  <script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+  <link href="site_libs/reactable-0.4.5/reactable.css" rel="stylesheet" />
+  <script src="site_libs/reactable-binding-0.4.5/reactable.js"></script>
+  <script src="site_libs/plotly-binding-4.12.1/plotly.js"></script>
+  <script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+  <script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet" />
+  <script src="site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+  <link href="site_libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet" />
+  <script src="site_libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2765,7 +2783,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Core Sports Data","description":"Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL.","authors":[]}
+{"title":"Who has the most average AFL career?","description":"I built a z-score model to find the AFL player whose whole career sits closest to the average.","authors":[],"publishedDate":"2026-10-07T00:00:00.000+11:00"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2801,55 +2819,55 @@ AFL
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Core Sports Data</h1>
+<h1>Who has the most average AFL career?</h1>
 
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Welcome to Core Sports Data, a page dedicated to providing statistical analysis for the AFL.</p></p>
+<p>I built a z-score model to find the AFL player whose whole career sits closest to the average.</p>
 </div>
 
 
 <div class="d-article">
-<p><strong>Feel free to dive into any of the projects below!</strong></p>
-<p><a href="AFL.html">Which stats contribute heaviest to winning?</a></p>
-<p><a href="brownlow_analysis.html">What predicts brownlow votes?</a></p>
-<p><a href="afl_average_player.html">Who has the most average AFL career?</a></p>
+<p>Everyone knows about the stars of the competition, But who is the <strong>most average</strong> player the league has ever seen?</p>
+<p>To answer that, I gave every player a <strong>z-score for each stat over their entire career</strong>. A z-score of <strong>0 means exactly the average player</strong>, +1 means one standard deviation above, and -1 means one below. Every stat measured is weighted equally.</p>
+<p><strong>The answer: Nik Cox</strong>, who played 61 games (2021–2026) and whose career sits an average of just <strong>0.28 standard deviations</strong> from average across the 20 statistics being used.</p>
 <hr />
-<h2 id="what-will-you-find-here-future-plans">What will you find here? (+Future plans!)</h2>
-<h3 id="afl-analysis"><a href="AFL.html">AFL Analysis</a></h3>
-<p>statistical AFL analysis featuring:</p>
-<ul>
-<li><strong>Interactive visuals</strong> where you can find historical statistic data</li>
-<li><strong>Correlation analysis</strong> finding which statistics directly correlate to being successful</li>
-<li><strong>Data tables</strong> with statistics provided for free use</li>
-<li><strong>Final thoughts and insights</strong> where we take the numbers and break them down in an easy to understand way</li>
-</ul>
-<h3 id="about-the-data-myself"><a href="about.html">About the Data &amp; Myself</a></h3>
-<p>Understanding the methodology and inspirations behind this page:</p>
-<ul>
-<li>Data sources</li>
-<li>Statistics glossary</li>
-<li>Limitations and context behind the data</li>
-<li>Inspirations and background</li>
-</ul>
-<h3 id="future-plans">Future plans!</h3>
-<ul>
-<li>Further statistical analysis on AFL</li>
-<li>AFL prediction models (match + brownlow)</li>
-<li>Expanding to other sports i’m passionate about (Soccer, NBA, NFL etc.)</li>
-</ul>
+<h2 id="the-15-most-average-careers">The 15 most average careers</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="reactable html-widget html-fill-item" id="htmlwidget-dc78e0252c6e5a6ba3af" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-dc78e0252c6e5a6ba3af">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Rank":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"Player":["Nik Cox","Greg Bentley","Dylan Addison","Chayce Jones","Claye Beams","Jay Kennedy Harris","Sam Reid","Caleb Poulter","Bailey Banfield","Blaine Boekhorst","Koltyn Tholstrup","Andrew Moore","Paul Stewart","Steven Browne","Matt Guelfi"],"Career":["2021–2026","2006–2009","2006–2014","2019–2026","2011–2017","2014–2019","2008–2021","2021–2025","2018–2026","2015–2017","2024–2026","2010–2016","2008–2016","2008–2010","2018–2026"],"Games":[61,26,93,98,54,39,108,35,119,25,43,60,101,23,124],"Finals":[1,0,3,0,0,0,7,0,3,0,1,5,0,0,1],"Average score":[0.28,0.31,0.32,0.34,0.35,0.36,0.37,0.37,0.37,0.37,0.38,0.38,0.38,0.38,0.38],"Overall z":[-0.05,-0.09,-0.07,-0.07,-0.01,-0.12,-0.16,-0.05,0.06,-0.02,0.17,-0.12,-0.11,-0.13,0.07],"Disposals / g":[11.8,12.1,11.7,12.7,13,12.4,11.6,13.7,11.7,13.9,14,13.9,12.9,13,12.2],"Tackles / g":[2.1,2.4,2.4,2,2,2.6,2.9,2.3,2.4,2.4,2.2,3.1,2,2.1,2.7],"Goals / g":[0.34,0.31,0.32,0.23,0.5,0.31,0.31,0.29,0.55,0.6,0.26,0.32,0.33,0.26,0.56]},"columns":[{"id":"Rank","name":"Rank","type":"numeric","width":100},{"id":"Player","name":"Player","type":"character"},{"id":"Career","name":"Career","type":"character"},{"id":"Games","name":"Games","type":"numeric"},{"id":"Finals","name":"Finals","type":"numeric"},{"id":"Average score","name":"Average score","type":"numeric"},{"id":"Overall z","name":"Overall z","type":"numeric"},{"id":"Disposals / g","name":"Disposals / g","type":"numeric"},{"id":"Tackles / g","name":"Tackles / g","type":"numeric"},{"id":"Goals / g","name":"Goals / g","type":"numeric"}],"defaultPageSize":15,"highlight":true,"striped":true,"compact":true,"dataKey":"7408d5fff7de170a4d9cea61503d08b9"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<p><small><strong>Average score</strong> = root-mean-square of the career’s z-scores (lower = more average). This method is preferred as it can accurately measure changes between positive &amp; negative values. <strong>Overall z</strong> = mean z, but doesn’t consider changes between positive &amp; negative meaning values further from the mean can cancel each other out.</small></p>
 <hr />
-<h2 id="why-is-data-analysis-important-in-sport">Why is Data analysis important in sport?</h2>
-<p>Within a sporting context, data-driven analysis is crucial when trying to broaden your knowledge of the game.</p>
-<ul>
-<li><strong>Coaches</strong> being able to identify which areas their team succeed at and what their opponents potential weaknesses are can give them a huge advantage when creating a game plan</li>
-<li><strong>Analysts</strong> can find relationships between stats and outcomes and provide an easier understanding as to why <strong>point A</strong> is a big reason for <strong>point B</strong> happening<br />
-</li>
-<li><strong>Fans</strong> can gain a greater understanding of why the team they support plays a certain way, or why <strong>Player A</strong> has certain strengths over <strong>Player B</strong></li>
-<li><strong>Media</strong> can provide evidence-based commentary on team and player performance</li>
-</ul>
+<h2 id="the-z-score-card">The z-score card</h2>
+<p>Each cell is the player’s career z-score for that stat. Blue is below the average player, red is above, and white is average.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="reactable html-widget html-fill-item" id="htmlwidget-841e2b396157924e5c6d" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-841e2b396157924e5c6d">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Player":["Nik Cox","Greg Bentley","Dylan Addison","Chayce Jones","Claye Beams","Jay Kennedy Harris","Sam Reid","Caleb Poulter","Bailey Banfield","Blaine Boekhorst"],"Kicks":[-0.38,-0.26,-0.45,0.31,0.02,-0.37,-0.51,0.38,-0.21,0.3],"Handballs":[0.18,0.06,-0.01,-0.22,-0.12,0.01,-0.08,0.04,-0.12,-0.16],"Contested possessions":[-0.11,-0.07,-0.28,0.11,-0.49,0.02,-0.07,-0.17,-0.06,-0.42],"Marks":[0.12,-0.41,0.26,-0.63,-0.1,-0.47,-0.45,0.41,-0.4,-0.12],"Contested marks":[0.32,-0.34,0.53,-0.4,-0.32,-0.76,-0.36,-0.39,-0.32,-0.53],"Marks inside 50":[0.14,-0.34,0.1,-0.28,0.36,0.27,0.01,-0.04,0.41,0.03],"Tackles":[-0.15,0.23,0.04,-0.24,-0.53,0.04,0.34,0.04,0.09,-0.18],"Clearances":[-0.26,-0.26,-0.32,0.14,-0.14,-0.12,-0.19,-0.3,-0.28,-0.4],"Inside 50s":[-0.43,0.42,-0.55,-0.13,0.19,-0.23,-0.32,0.71,-0.18,0.38],"Rebound 50s":[-0.28,-0.46,-0.23,0.59,0.16,-0.36,-0.27,-0.52,-0.39,-0.22],"One percenters":[-0.21,-0.5,0.14,-0.4,-0.38,-0.88,-0.19,-0.52,-0.22,-0.52],"Hit-outs":[-0.04,-0.19,-0.38,-0.39,-0.3,-0.39,-0.38,-0.39,-0.39,-0.39],"Goals":[0.02,-0.24,-0.18,-0.26,0.3,-0.17,-0.16,-0.16,0.58,0.54],"Behinds":[0.2,0,-0.08,-0.07,0,0.26,0.22,0.21,0.46,0.78],"Goal assists":[-0.7,-0.24,-0.49,-0.01,0.35,0.3,-0.18,0.01,0.65,0.37],"Clangers":[0.12,-0.58,-0.18,0.16,-0.51,-0.15,-0.08,-0.07,-0.14,0.03],"Frees for":[0.19,-0.04,-0.13,0.28,-0.54,-0.3,-0.51,-0.45,0.25,-0.17],"Frees against":[0.21,-0.46,0.19,-0.06,-0.71,-0.33,0.23,-0.63,-0.27,0.03],"Bounces":[0.37,-0.03,-0.06,-0.41,-0.18,0.29,-0.78,-0.52,0.05,0.54],"Games played":[0.37,-0.19,0.65,0.68,0.29,0.07,0.75,0,0.81,-0.22]},"columns":[{"id":"Player","name":"Player","type":"character","minWidth":200,"style":{"fontWeight":600}},{"id":"Kicks","name":"Kicks","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(60,110,200,0.15)"},{"background":"rgba(220,80,60,0.10)"},{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(60,110,200,0.12)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(220,80,60,0.13)"},{"background":"rgba(60,110,200,0.07)"},{"background":"rgba(220,80,60,0.10)"}]},{"id":"Handballs","name":"Handballs","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.06)"},{"background":"rgba(220,80,60,0.02)"},{"background":"rgba(60,110,200,0.00)"},{"background":"rgba(60,110,200,0.07)"},{"background":"rgba(60,110,200,0.04)"},{"background":"rgba(220,80,60,0.00)"},{"background":"rgba(60,110,200,0.03)"},{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(60,110,200,0.04)"},{"background":"rgba(60,110,200,0.05)"}]},{"id":"Contested possessions","name":"Contested possessions","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.04)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(220,80,60,0.04)"},{"background":"rgba(60,110,200,0.16)"},{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.14)"}]},{"id":"Marks","name":"Marks","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.04)"},{"background":"rgba(60,110,200,0.14)"},{"background":"rgba(220,80,60,0.09)"},{"background":"rgba(60,110,200,0.21)"},{"background":"rgba(60,110,200,0.03)"},{"background":"rgba(60,110,200,0.16)"},{"background":"rgba(60,110,200,0.15)"},{"background":"rgba(220,80,60,0.14)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.04)"}]},{"id":"Contested marks","name":"Contested marks","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.11)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(220,80,60,0.18)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(60,110,200,0.25)"},{"background":"rgba(60,110,200,0.12)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(60,110,200,0.18)"}]},{"id":"Marks inside 50","name":"Marks inside 50","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.05)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(220,80,60,0.03)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(220,80,60,0.12)"},{"background":"rgba(220,80,60,0.09)"},{"background":"rgba(220,80,60,0.00)"},{"background":"rgba(60,110,200,0.01)"},{"background":"rgba(220,80,60,0.14)"},{"background":"rgba(220,80,60,0.01)"}]},{"id":"Tackles","name":"Tackles","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.05)"},{"background":"rgba(220,80,60,0.08)"},{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(60,110,200,0.08)"},{"background":"rgba(60,110,200,0.18)"},{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(220,80,60,0.11)"},{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(220,80,60,0.03)"},{"background":"rgba(60,110,200,0.06)"}]},{"id":"Clearances","name":"Clearances","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(220,80,60,0.05)"},{"background":"rgba(60,110,200,0.05)"},{"background":"rgba(60,110,200,0.04)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(60,110,200,0.10)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(60,110,200,0.13)"}]},{"id":"Inside 50s","name":"Inside 50s","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.14)"},{"background":"rgba(220,80,60,0.14)"},{"background":"rgba(60,110,200,0.18)"},{"background":"rgba(60,110,200,0.04)"},{"background":"rgba(220,80,60,0.06)"},{"background":"rgba(60,110,200,0.08)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(220,80,60,0.24)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(220,80,60,0.13)"}]},{"id":"Rebound 50s","name":"Rebound 50s","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(60,110,200,0.15)"},{"background":"rgba(60,110,200,0.08)"},{"background":"rgba(220,80,60,0.20)"},{"background":"rgba(220,80,60,0.05)"},{"background":"rgba(60,110,200,0.12)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.07)"}]},{"id":"One percenters","name":"One percenters","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.07)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(220,80,60,0.05)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.29)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(60,110,200,0.07)"},{"background":"rgba(60,110,200,0.17)"}]},{"id":"Hit-outs","name":"Hit-outs","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.01)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.10)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.13)"},{"background":"rgba(60,110,200,0.13)"}]},{"id":"Goals","name":"Goals","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.01)"},{"background":"rgba(60,110,200,0.08)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(220,80,60,0.10)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(60,110,200,0.05)"},{"background":"rgba(60,110,200,0.05)"},{"background":"rgba(220,80,60,0.19)"},{"background":"rgba(220,80,60,0.18)"}]},{"id":"Behinds","name":"Behinds","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.07)"},{"background":"rgba(60,110,200,0.00)"},{"background":"rgba(60,110,200,0.03)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.00)"},{"background":"rgba(220,80,60,0.09)"},{"background":"rgba(220,80,60,0.07)"},{"background":"rgba(220,80,60,0.07)"},{"background":"rgba(220,80,60,0.15)"},{"background":"rgba(220,80,60,0.26)"}]},{"id":"Goal assists","name":"Goal assists","type":"numeric","minWidth":200,"style":[{"background":"rgba(60,110,200,0.23)"},{"background":"rgba(60,110,200,0.08)"},{"background":"rgba(60,110,200,0.16)"},{"background":"rgba(60,110,200,0.00)"},{"background":"rgba(220,80,60,0.12)"},{"background":"rgba(220,80,60,0.10)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(220,80,60,0.00)"},{"background":"rgba(220,80,60,0.22)"},{"background":"rgba(220,80,60,0.12)"}]},{"id":"Clangers","name":"Clangers","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.04)"},{"background":"rgba(60,110,200,0.19)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(220,80,60,0.05)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(60,110,200,0.05)"},{"background":"rgba(60,110,200,0.03)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.05)"},{"background":"rgba(220,80,60,0.01)"}]},{"id":"Frees for","name":"Frees for","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.06)"},{"background":"rgba(60,110,200,0.01)"},{"background":"rgba(60,110,200,0.04)"},{"background":"rgba(220,80,60,0.09)"},{"background":"rgba(60,110,200,0.18)"},{"background":"rgba(60,110,200,0.10)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(60,110,200,0.15)"},{"background":"rgba(220,80,60,0.08)"},{"background":"rgba(60,110,200,0.06)"}]},{"id":"Frees against","name":"Frees against","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.07)"},{"background":"rgba(60,110,200,0.15)"},{"background":"rgba(220,80,60,0.06)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.24)"},{"background":"rgba(60,110,200,0.11)"},{"background":"rgba(220,80,60,0.08)"},{"background":"rgba(60,110,200,0.21)"},{"background":"rgba(60,110,200,0.09)"},{"background":"rgba(220,80,60,0.01)"}]},{"id":"Bounces","name":"Bounces","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.12)"},{"background":"rgba(60,110,200,0.01)"},{"background":"rgba(60,110,200,0.02)"},{"background":"rgba(60,110,200,0.14)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(220,80,60,0.10)"},{"background":"rgba(60,110,200,0.26)"},{"background":"rgba(60,110,200,0.17)"},{"background":"rgba(220,80,60,0.02)"},{"background":"rgba(220,80,60,0.18)"}]},{"id":"Games played","name":"Games played","type":"numeric","minWidth":200,"style":[{"background":"rgba(220,80,60,0.12)"},{"background":"rgba(60,110,200,0.06)"},{"background":"rgba(220,80,60,0.22)"},{"background":"rgba(220,80,60,0.23)"},{"background":"rgba(220,80,60,0.10)"},{"background":"rgba(220,80,60,0.02)"},{"background":"rgba(220,80,60,0.25)"},{"background":"rgba(60,110,200,0.00)"},{"background":"rgba(220,80,60,0.27)"},{"background":"rgba(60,110,200,0.07)"}]}],"defaultPageSize":10,"compact":true,"dataKey":"c688a6b8a34feaa3a6b42d2a4d3ff96d"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
 <hr />
-<p><em>DISCLAIMER: This is a passion project. The page will be updated during my free time, and I appreciate all of the support for the page.</em></p>
+<h2 id="what-does-an-average-career-look-like">What does an average career look like?</h2>
+<p>This is Nik Cox’s career profile through the stats measured. We can see that the furthest stat from the mean is ‘Goal assists’, -0.7 SD’s away. ‘Goals’ is his closest stat to the mean, only 0.02 SD’s away.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-70eb89b5917d21dc640b" style="width:624px;height:384px;"></div>
+<script type="application/json" data-for="htmlwidget-70eb89b5917d21dc640b">{"x":{"visdat":{"4d1e1c9564d0":["function () ","plotlyVisDat"]},"cur_data":"4d1e1c9564d0","attrs":{"4d1e1c9564d0":{"x":{},"y":{},"orientation":"h","marker":{"color":{}},"hovertemplate":"%{y}: z = %{x:.2f}<extra><\/extra>","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":140,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"z-score (0 = the average player)","zeroline":true},"yaxis":{"domain":[0,1],"automargin":true,"title":"","type":"category","categoryorder":"array","categoryarray":["Goal assists","Inside 50s","Kicks","Rebound 50s","Clearances","One percenters","Tackles","Contested possessions","Hit-outs","Goals","Clangers","Marks","Marks inside 50","Handballs","Frees for","Behinds","Frees against","Contested marks","Bounces","Games played"]},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false,"displayModeBar":false},"data":[{"x":[-0.38187405045307049,0.18173901510822782,-0.10897015767740345,0.12443822191971959,0.3194913634030126,0.14182572323051945,-0.14674556725788956,-0.25656170170714221,-0.43321904004054662,-0.27863937648760523,-0.21314261139743873,-0.035637706092312788,0.023422292377437599,0.19830983166240321,-0.69613722835967873,0.12204672389080026,0.18893572979735102,0.20542667029040748,0.36910424112373463,0.36945746766652371],"y":["Kicks","Handballs","Contested possessions","Marks","Contested marks","Marks inside 50","Tackles","Clearances","Inside 50s","Rebound 50s","One percenters","Hit-outs","Goals","Behinds","Goal assists","Clangers","Frees for","Frees against","Bounces","Games played"],"orientation":"h","marker":{"color":["#4f81bd","#c0504d","#4f81bd","#c0504d","#c0504d","#c0504d","#4f81bd","#4f81bd","#4f81bd","#4f81bd","#4f81bd","#4f81bd","#c0504d","#c0504d","#4f81bd","#c0504d","#c0504d","#c0504d","#c0504d","#c0504d"],"line":{"color":"rgba(31,119,180,1)"}},"hovertemplate":["%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>","%{y}: z = %{x:.2f}<extra><\/extra>"],"type":"bar","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<hr />
+<h2 id="how-the-model-works">How the model works</h2>
+<ul>
+<li>The model is <strong>Era-adjusted</strong>, so each stat is divided by that season’s league average per game, so a 2006 player and a 2026 player are each judged against their own era.</li>
+<li>Each player’s career line is their average across every game they played. Games played is its own measure.</li>
+<li>Each stat is compared with every player’s career line. Hit-outs, goals and games played are log-transformed first so a few extreme players don’t distort the scale.</li>
+<li>The <em>average score</em> is the <strong>root-mean-square</strong> of the 20 z-scores. Squaring means that +2 on one stat and -2 on another don’t cancel out to look “average”.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>This was a simple, fun look at what a typical AFL career looks like. Based on our measures, Nik Cox has the most average AFL career and when you think about it, it makes a lot of sense. Cox is a player who is still relatively young in his career and a lot of 1-2 gamers would be weighing down the average games. The type of player he is helps drastically as well. Cox is someone who has played basically every position throughout his career, which means he’s well suited to the range of statistics used, unlike someone who is a pure forward/defender. This especially helps when hit-outs are being taken into account. Many players would have recorded 0 hit-outs throughout their career, but since Cox is over 200cm and has at times played a 2nd or 3rd ruck role, his career hitouts would be much closer to the mean compared to someone who is 185cm, as he has at least recorded <strong>some</strong> hitouts throughout his career. All-in-all, Cox’s ability to play all over the ground whilst still being relatively young in his career, means he is the perfect candidate to be crowned the AFL’s <strong>Most Average Player</strong>.</p>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li>Data comes from AFL Tables via <code>fitzRoy</code>, which records these stats from 2003 onwards, so data before that cannot be used.</li>
+<li>Players who debuted before 2003 are excluded because their careers would be cut off.</li>
+</ul>
+<p><em>Questions or ideas? <a href="https://x.com/CoreSportsData">Reach out!</a></em></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

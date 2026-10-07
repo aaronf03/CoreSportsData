@@ -1,0 +1,117 @@
+---
+title: "Who has the most average AFL career?"
+description: "I built a z-score model to find the AFL player whose whole career sits closest to the average."
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article:
+    css: styles.css
+    includes:
+      in_header: favicon.html
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(reactable)
+library(plotly)
+
+source("R/00_config.R")
+source("R/05_average_player.R")
+
+top <- avg_career_table[1, ]
+```
+
+Everyone knows about the stars of the competition, But who is the **most average** player the league has ever seen?
+
+To answer that, I gave every player a **z-score for each stat over their entire career**. A z-score of **0 means exactly the average player**, +1 means one standard deviation above, and -1 means one below. Every stat measured is weighted equally.
+
+**The answer: `r top$player`**, who played `r top$games` games (`r top$first_season`–`r top$last_season`) and whose career sits an average of just **`r round(top$avg_score, 2)` standard deviations** from average across the `r avg_meta$n_components` statistics being used.
+
+---
+
+## The 15 most average careers
+
+```{r leaderboard}
+avg_career_table %>%
+  slice_head(n = 15) %>%
+  transmute(
+    Rank = rank,
+    Player = player,
+    Career = paste(first_season, last_season, sep = "–"),
+    Games = games,
+    `Finals` = finals_games,
+    `Average score` = round(avg_score, 2),
+    `Overall z` = round(overall_z, 2),
+    `Disposals / g` = round(disposals_pg, 1),
+    `Tackles / g` = round(tackles_pg, 1),
+    `Goals / g` = round(goals_pg, 2)
+  ) %>%
+  reactable(striped = TRUE, highlight = TRUE, compact = TRUE,
+            defaultPageSize = 15, columns = list(Rank = colDef(width = 100)))
+```
+
+<small>**Average score** = root-mean-square of the career's z-scores (lower = more average). This method is preferred as it can accurately measure changes between positive & negative values. **Overall z** = mean z, but doesn't consider changes between positive & negative meaning values further from the mean can cancel each other out.</small>
+
+---
+
+## The z-score card
+
+Each cell is the player's career z-score for that stat. Blue is below the average player, red is above, and white is average.
+
+```{r zcard}
+z_tbl <- avg_career_table %>%
+  slice_head(n = 10) %>%
+  select(player, all_of(paste0("z_", AVG_COMPONENTS)))
+names(z_tbl) <- c("Player", unname(AVG_LABELS[AVG_COMPONENTS]))
+z_tbl <- z_tbl %>% mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+z_style <- function(value) {
+  if (!is.numeric(value)) return(list())
+  a <- min(abs(value) / 3, 1)
+  col <- if (value > 0) "220,80,60" else "60,110,200"
+  list(background = sprintf("rgba(%s,%.2f)", col, a))
+}
+
+reactable(z_tbl, compact = TRUE, defaultPageSize = 10,
+          defaultColDef = colDef(style = z_style, minWidth = 200),
+          columns = list(Player = colDef(minWidth = 200, style = list(fontWeight = 600))))
+```
+
+---
+
+## What does an average career look like?
+
+This is Nik Cox's career profile through the stats measured. We can see that the furthest stat from the mean is 'Goal assists', -0.7 SD's away. 'Goals' is his closest stat to the mean, only 0.02 SD's away.
+
+```{r profile-chart}
+prof <- avg_top_profile %>%
+  mutate(label = factor(label, levels = label[order(z)]),
+         colour = if_else(z > 0, "#c0504d", "#4f81bd"))
+
+plot_ly(prof, x = ~z, y = ~label, type = "bar", orientation = "h",
+        marker = list(color = ~colour),
+        hovertemplate = "%{y}: z = %{x:.2f}<extra></extra>") %>%
+  layout(xaxis = list(title = "z-score (0 = the average player)", zeroline = TRUE),
+         yaxis = list(title = ""), margin = list(l = 140)) %>%
+  config(displayModeBar = FALSE)
+```
+
+---
+
+## How the model works
+
+- The model is **Era-adjusted**, so each stat is divided by that season's league average per game, so a 2006 player and a 2026 player are each judged against their own era.
+- Each player's career line is their average across every game they played. Games played is its own measure.
+- Each stat is compared with every player's career line. Hit-outs, goals and games played are log-transformed first so a few extreme players don't distort the scale.
+- The *average score* is the **root-mean-square** of the `r avg_meta$n_components` z-scores. Squaring means that +2 on one stat and -2 on another don't cancel out to look "average".
+
+## Conclusion
+This was a simple, fun look at what a typical AFL career looks like. Based on our measures, Nik Cox has the most average AFL career and when you think about it, it makes a lot of sense. Cox is a player who is still relatively young in his career and a lot of 1-2 gamers would be weighing down the average games. The type of player he is helps drastically as well. Cox is someone who has played basically every position throughout his career, which means he's well suited to the range of statistics used, unlike someone who is a pure forward/defender. This especially helps when hit-outs are being taken into account. Many players would have recorded 0 hit-outs throughout their career, but since Cox is over 200cm and has at times played a 2nd or 3rd ruck role, his career hitouts would be much closer to the mean compared to someone who is 185cm, as he has at least recorded **some** hitouts throughout his career. All-in-all, Cox's ability to play all over the ground whilst still being relatively young in his career, means he is the perfect candidate to be crowned the AFL's **Most Average Player**.
+
+## Limitations
+
+- Data comes from AFL Tables via `fitzRoy`, which records these stats from `r avg_meta$start_season` onwards, so data before that cannot be used.
+- Players who debuted before `r avg_meta$start_season` are excluded because their careers would be cut off`r if (avg_meta$exclude_active) paste0(", as are players still active in ", avg_meta$end_season) else ""`.
+
+*Questions or ideas? [Reach out!](https://x.com/CoreSportsData)*

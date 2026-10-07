@@ -11,8 +11,8 @@ navbar:
           href: AFL.html
         - text: "What Predicts Brownlow Votes? (2026)"
           href: brownlow_analysis.html
-        - text: "Coming soon!"
-          href: afl_player_analysis.html
+        - text: "Who has the most average AFL career?"
+          href: afl_average_player.html
         - text: "Coming soon!"
           href: afl_predictions.html
         - text: "Coming soon!"
